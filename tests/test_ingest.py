@@ -1,9 +1,6 @@
-import os
 from pathlib import Path
-
-import pytest
 from pypdf import PdfWriter
-
+import pytest
 from src.ingest.load_pfds import load_document
 from src.ingest.split_pds import (
     split_documents,

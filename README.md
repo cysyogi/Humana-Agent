@@ -85,5 +85,3 @@ python app/ui/gradio_app.py  # then open http://localhost:7860
 - **Chunk visualizer** to inspect what text lives in each vector.
 - **Hybrid lexical+semantic retrieval** for exact‑term questions.
 - **Langfuse tracing** for debugging and latency metrics.
-
-Feel free to fork and extend—each agent is only \~200lines and shares a common interface, so plugging in a new tool is straightforward.  Enjoy building!
