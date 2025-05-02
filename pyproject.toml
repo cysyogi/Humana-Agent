@@ -9,8 +9,10 @@ dependencies = [
     "langchain-chroma>=0.2.3",
     "langchain-community>=0.3.23",
     "openai>=1.76.2",
+    "optuna>=4.3.0",
     "pypdf>=5.4.0",
     "pytest>=8.3.5",
+    "pytest-xdist>=3.6.1",
     "python-dotenv>=1.1.0",
     "tiktoken>=0.9.0",
 ]

@@ -1,6 +1,7 @@
 import argparse
 import os
 import shutil
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFDirectoryLoader
@@ -26,6 +27,19 @@ def main():
 
     documents = load_documents()
     chunks = split_documents(documents)
+    
+    # === EMBEDDING IN PARALLEL ===
+    # instead of embedding one-by-one, fire off a pool of workers
+    def embed_chunk(chunk):
+        chunk.metadata["embedding"] = get_embedding()(chunk.page_content)
+        return chunk
+    
+    
+    with ProcessPoolExecutor() as pool:
+                futures = [pool.submit(embed_chunk, c) for c in chunks]
+            chunks = [f.result() for f in as_completed(futures)]
+    
+
     add_to_chroma(chunks)
 
 
