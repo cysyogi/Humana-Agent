@@ -4,14 +4,12 @@ import shutil
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from dotenv import load_dotenv
-from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain.schema import Document
+from langchain_chroma import Chroma
+from langchain_community.document_loaders import PyPDFDirectoryLoader
 
 from src.ingest.embedding_creator import get_embedding
 from src.ingest.split_pds import split_documents
-
-from langchain_chroma import Chroma
-
 
 CHROMA_PATH = "chroma"
 DATA_PATH = "data"
@@ -26,7 +24,11 @@ def main():
         clear_database()
 
     documents = load_documents()
-    chunks = split_documents(documents)
+    chunks = split_documents(
+            documents,
+            chunk_size = int(os.getenv("CHUNK_SIZE", "800")),
+        chunk_overlap = int(os.getenv("CHUNK_OVERLAP", "80")),
+    )
     
     # === EMBEDDING IN PARALLEL ===
     # instead of embedding one-by-one, fire off a pool of workers
@@ -36,8 +38,8 @@ def main():
     
     
     with ProcessPoolExecutor() as pool:
-                futures = [pool.submit(embed_chunk, c) for c in chunks]
-            chunks = [f.result() for f in as_completed(futures)]
+        futures = [pool.submit(embed_chunk, c) for c in chunks]
+        chunks = [f.result() for f in as_completed(futures)]
     
 
     add_to_chroma(chunks)

@@ -8,6 +8,7 @@ from langchain.prompts import ChatPromptTemplate
 
 from src.ingest.embedding_creator import get_embedding
 
+BASE_K = 5
 CHROMA_PATH = "chroma"
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
@@ -24,14 +25,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("query_text", type=str, help="The query text.")
     args = parser.parse_args()
-    query_rag(args.query_text)
+    query_rag(args.query_text,BASE_K)
 
 
-def query_rag(query_text: str) -> str:
+def query_rag(query_text: str,k: int) -> str:
     emb_fn = get_embedding()
     db    = Chroma(persist_directory=CHROMA_PATH, embedding_function=emb_fn)
 
-    results     = db.similarity_search_with_score(query_text, k=5)
+    results     = db.similarity_search_with_score(query_text, k or BASE_K)
     docs, _     = zip(*results)
     context_txt = "\n\n---\n\n".join(d.page_content for d in docs)
 
