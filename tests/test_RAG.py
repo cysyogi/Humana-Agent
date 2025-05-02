@@ -1,21 +1,14 @@
 from utils.AI_QA_tester import query_and_validate
+import pytest
+from data.test_cases import TEST_CASES, TEST_CASES_100
 
-def test_if_reasoning_is_picked():
-    assert query_and_validate(
-        question="If my child that is 4 years old needs glasses how much do i have to pay?",
-        expected_response="No charge, deductible does not apply",
+@pytest.mark.parametrize("case", TEST_CASES_100, ids=lambda c: c["question"])
+def test_query_rag_cases(case):
+    got = query_and_validate(
+        question=case["question"],
+        expected_response=case["expected_response"],
     )
-
-
-def test_no_of_chiropractor_visits():
-    assert query_and_validate(
-        question="Can I visit the chiropractor?",
-        expected_response="Yes, 20 Visits per year are allowed but for spinal manipulation only.",
-    )
-
-
-def test_is_max_deductible_is_picked_right():
-    assert not query_and_validate(
-        question="How much is the max deductible?",
-        expected_response="$35,000",
-    )
+    if case["should_match"]:
+        assert got, f"Expected match for question: {case['question']}"
+    else:
+        assert not got, f"Expected mismatch for question: {case['question']}"
