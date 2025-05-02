@@ -5,5 +5,19 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "chroma>=0.2.0",
+    "langchain-chroma>=0.2.3",
+    "langchain-community>=0.3.23",
+    "openai>=1.76.2",
     "pypdf>=5.4.0",
+    "pytest>=8.3.5",
+    "python-dotenv>=1.1.0",
+    "tiktoken>=0.9.0",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = "src"
+
+[tool.poetry.dev-dependencies]
+pypdf = "^5.0"
+pytest = "^8.0"
