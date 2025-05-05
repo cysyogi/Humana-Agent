@@ -179,3 +179,4 @@ chroma/
 src/db/chroma/
 *.bin                 # data_level0.bin, header.bin …
 *.sqlite3             # chroma.sqlite3, other scratch DBs
+*.chainlit

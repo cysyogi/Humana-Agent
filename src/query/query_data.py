@@ -5,7 +5,10 @@ from dotenv import load_dotenv
 from langchain_chroma import Chroma
 from langchain.chains import LLMChain
 from langchain_community.chat_models import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
+
+from src.services.openai_service import ask_openai
+
 
 from src.ingest.embedding_creator import get_embedding
 
@@ -74,16 +77,7 @@ def query_rag(query_text: str, policy_id: str,k: int = 5) -> str:
         context=context_txt, question=query_text
     )
 
-    model = ChatOpenAI(
-        model_name="gpt-4.1",
-        temperature=0.0,
-    )
-    raw_response = model.invoke(prompt)
-
-    if hasattr(raw_response, "content"):
-        response_text = raw_response.content
-    else:
-        response_text = raw_response
+    response_text = ask_openai(prompt)
 
     sources = [d.metadata.get("id") for d in docs]
     print("Response:", response_text)

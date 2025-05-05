@@ -113,6 +113,8 @@ googleapis-common-protos==1.70.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
+googlemaps==4.10.0
+    # via humana-agent (pyproject.toml)
 greenlet==3.2.1
     # via sqlalchemy
 grpcio==1.71.0
@@ -602,6 +604,7 @@ regex==2024.11.6
     # via tiktoken
 requests==2.32.3
     # via
+    #   googlemaps
     #   huggingface-hub
     #   kubernetes
     #   langchain
