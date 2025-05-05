@@ -1,18 +1,18 @@
 import argparse
 import os
 import shutil
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from pathlib import Path
 
 from dotenv import load_dotenv
-from langchain.schema import Document
-from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFDirectoryLoader
+from langchain.schema import Document
 
 from src.ingest.embedding_creator import get_embedding
 from src.ingest.split_pds import split_documents
 
+from langchain_chroma import Chroma
 CHROMA_PATH = "chroma"
-DATA_PATH = "data"
+DATA_PATH = "data/policy_data"
 
 
 def main():
@@ -24,57 +24,50 @@ def main():
         clear_database()
 
     documents = load_documents()
-    chunks = split_documents(
-            documents,
-            chunk_size = int(os.getenv("CHUNK_SIZE", "800")),
-        chunk_overlap = int(os.getenv("CHUNK_OVERLAP", "80")),
-    )
-    
-    # === EMBEDDING IN PARALLEL ===
-    # instead of embedding one-by-one, fire off a pool of workers
-    def embed_chunk(chunk):
-        chunk.metadata["embedding"] = get_embedding()(chunk.page_content)
-        return chunk
-    
-    
-    with ProcessPoolExecutor() as pool:
-        futures = [pool.submit(embed_chunk, c) for c in chunks]
-        chunks = [f.result() for f in as_completed(futures)]
-    
-
+    chunks = split_documents(documents)
     add_to_chroma(chunks)
 
 
-def load_documents():
+def load_documents() -> list[Document]:
     loader = PyPDFDirectoryLoader(DATA_PATH)
-    return loader.load()
+    docs   = loader.load()
+
+    if not docs:
+        raise FileNotFoundError(
+            f"No PDF documents found in {DATA_PATH!r}. "
+            "Double‑check the path or add files before running."
+        )
+
+    return docs
 
 
 def add_to_chroma(chunks: list[Document]):
-    # instantiate (auto-persisting) Chroma
-    db = Chroma(
-        persist_directory=CHROMA_PATH,
-        embedding_function=get_embedding(),
-    )
-
-    # tag each chunk with a stable ID
     chunks_with_ids = calculate_chunk_ids(chunks)
+    
+    grouped: dict[str, list[Document]] = {}
+    
+    for c in chunks_with_ids:
+        policy_id = Path(c.metadata["source"]).stem
+        grouped.setdefault(policy_id, []).append(c)
+    
+    emb_fn = get_embedding()
+    
+    for policy_id, policy_chunks in grouped.items():
+        db = Chroma(
+                collection_name = policy_id,
+            persist_directory = CHROMA_PATH,
+            embedding_function = emb_fn,
+        )
 
-    # find what’s already in the DB
-    existing = db.get(include=[])  # will always include “ids”
-    existing_ids = set(existing.get("ids", []))
-    print(f"Number of existing documents in DB: {len(existing_ids)}")
+        existing_ids = set(db.get(include=[]).get("ids", []))
+        new_chunks = [c for c in policy_chunks if c.metadata["id"] not in existing_ids]
 
-    # filter out chunks we’ve already stored
-    new_chunks = [c for c in chunks_with_ids if c.metadata["id"] not in existing_ids]
-
-    if new_chunks:
-        print(f"👉 Adding new documents: {len(new_chunks)}")
-        ids = [c.metadata["id"] for c in new_chunks]
-        db.add_documents(new_chunks, ids=ids)
-        # no db.persist() needed—Chroma auto-persists now
-    else:
-        print("✅ No new documents to add")
+        if new_chunks:
+            print(f"👉 Adding {len(new_chunks)} chunks to collection '{policy_id}'")
+            ids = [c.metadata["id"] for c in new_chunks]
+            db.add_documents(new_chunks, ids=ids)
+        else:
+            print(f"✅ No new chunks for '{policy_id}'")
 
 
 def calculate_chunk_ids(chunks: list[Document]):

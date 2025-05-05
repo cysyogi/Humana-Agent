@@ -1,7 +1,8 @@
 import argparse
+import sys, os, json
 
 from dotenv import load_dotenv
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from langchain.chains import LLMChain
 from langchain_community.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
@@ -10,6 +11,7 @@ from src.ingest.embedding_creator import get_embedding
 
 BASE_K = 5
 CHROMA_PATH = "chroma"
+POLICY_MAP_PATH = os.path.join("data", "policy_mapping.json")
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
 
@@ -22,17 +24,49 @@ Answer the question based on the above context: {question}
 
 
 def main():
+    load_dotenv()
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("query_text", type=str, help="The query text.")
+    parser.add_argument("question", help="Question to ask")
+    parser.add_argument(
+        "--policy",
+        required=True,
+        help="Policy ID (e.g. H1036269000SB25) or policy name"
+    )
+    parser.add_argument("-k", type=int, default=BASE_K, help="# chunks to retrieve")
     args = parser.parse_args()
-    query_rag(args.query_text,BASE_K)
+
+    # ‑‑ resolve user‑supplied policy to collection name
+    with open(POLICY_MAP_PATH) as f:
+        policy_map: dict[str, str] = json.load(f)
+
+    if args.policy in policy_map:
+        policy_id = args.policy
+    else:
+        policy_id = next(
+            (pid for pid, name in policy_map.items()
+             if name.lower() == args.policy.lower()),
+            None
+        )
+    if policy_id is None:
+        raise ValueError(
+            f"Unknown policy '{args.policy}'. "
+            "Check data/policy_mapping.json."
+        )
+
+    query_rag(args.question, policy_id, k=args.k)
 
 
-def query_rag(query_text: str,k: int) -> str:
+def query_rag(query_text: str, policy_id: str,k: int = 5) -> str:
     emb_fn = get_embedding()
-    db    = Chroma(persist_directory=CHROMA_PATH, embedding_function=emb_fn)
+    print(f"Querying {query_text}, using policy {policy_id}, k {k}")
+    db    = Chroma(
+        collection_name=policy_id,
+        persist_directory=CHROMA_PATH,
+        embedding_function=emb_fn
+    )
 
-    results     = db.similarity_search_with_score(query_text, k or BASE_K)
+    results     = db.similarity_search_with_score(query_text, k)
     docs, _     = zip(*results)
     context_txt = "\n\n---\n\n".join(d.page_content for d in docs)
 
@@ -40,9 +74,8 @@ def query_rag(query_text: str,k: int) -> str:
         context=context_txt, question=query_text
     )
 
-    # 4) call the model directly via .invoke()
     model = ChatOpenAI(
-        model_name="gpt-4.1",  # or "gpt-4" / "gpt-3.5-turbo"
+        model_name="gpt-4.1",
         temperature=0.0,
     )
     raw_response = model.invoke(prompt)
@@ -59,5 +92,4 @@ def query_rag(query_text: str,k: int) -> str:
 
 
 if __name__ == "__main__":
-    load_dotenv()
     main()

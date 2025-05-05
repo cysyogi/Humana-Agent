@@ -1,19 +1,22 @@
 TEST_CASES = [
-    {
+  {
+    "question": "How much is the max deductible?",
+    "expected_response": "$35,000",
+    "should_match": False,
+    "source": "kaiserPPO.pdf"
+  },
+  {
         "question": "If my child that is 4 years old needs glasses how much do i have to pay?",
         "expected_response": "No charge, deductible does not apply",
         "should_match": True,
+        "source": "kaiserPPO.pdf"
     },
     {
         "question": "Can I visit the chiropractor?",
         "expected_response": "Yes, 20 Visits per year are allowed but for spinal manipulation only.",
         "should_match": True,
-    },
-    {
-        "question": "How much is the max deductible?",
-        "expected_response": "$35,000",
-        "should_match": False,
-    },
+        "source": "kaiserPPO.pdf"
+    }
 ]
 
 TEST_CASES_100 = [
@@ -465,144 +468,144 @@ TEST_CASES_100 = [
     "question": "What is the individual deductible for in-network and out-of-network services on this plan?",
     "expected_response": "In-Network: $3,500 Individual / $7,000 Family;\nOut-of-Network Provider: $7,000 Individual / $14,000 Family",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the out-of-pocket limit for this plan, in-network vs out-of-network?",
     "expected_response": "In-Network Provider: $7,000 Individual / $14,000 Family;\nOut-of-Network Provider: $14,000 Individual / $28,000 Family",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Are any services covered before the deductible is met?",
     "expected_response": "Yes. Preventive care and services indicated in chart starting on page 2.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Will I pay less if I use a Kaiser network provider?",
     "expected_response": "This plan uses a provider network. You will pay less if you use a provider in the plan\u2019s network. You will pay the most if you use an out-of-network provider, and you might receive a bill from a provider for the difference between the provider\u2019s charge and what your plan pays (balance billing).",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Do I need a referral to see a specialist?",
     "expected_response": "Yes, but you may self-refer to certain specialists.\nThis plan will pay some or all of the costs to see a specialist for covered services but only if you have a referral before you see the specialist.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the cost-sharing for a primary care visit under this plan?",
     "expected_response": "Primary care visit to treat an injury or illness\nKP: 20% coinsurance / visit.\nNetwork: 30% coinsurance / visit.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What coinsurance applies for a specialist visit?",
     "expected_response": "Specialist visit\nKP: 20% coinsurance / visit.\nNetwork: 30% coinsurance / visit.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "How much do I pay for preventive care services?",
     "expected_response": "Preventive care/ screening/ immunization\nNo charge, deductible does not apply\n30% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the cost for diagnostic tests like x-rays or blood work?",
     "expected_response": "Diagnostic test (x-ray, blood work)\n20% coinsurance regardless of setting\n40% coinsurance\nNone",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "How much will an MRI or CT scan cost me under this plan?",
     "expected_response": "Imaging (CT/PET scans, MRI's)\n20% coinsurance / scan regardless of setting\n40% coinsurance\nPreauthorization required, or not covered.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What do generic prescription drugs cost on this plan?",
     "expected_response": "Generic drugs\nKP: 20% coinsurance / prescription (retail & mail order).\nNetwork: 30% coinsurance / prescription.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "How are preferred brand drugs covered?",
     "expected_response": "Preferred brand drugs\nKP: 20% coinsurance / prescription (retail & mail order).\nNetwork: 30% coinsurance / prescription.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the cost for non-preferred brand drugs?",
     "expected_response": "Non-preferred brand drugs\nKP: 20% coinsurance / prescription (retail & mail order).\nNetwork: 30% coinsurance / prescription.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "How are specialty drugs covered under this plan?",
     "expected_response": "Specialty drugs\nKP: 20% coinsurance / prescription (retail).\nNetwork: 30% coinsurance / prescription.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the cost-sharing for an outpatient surgery facility fee?",
     "expected_response": "Facility fee (e.g., ambulatory surgery center)\n20% coinsurance\n40% coinsurance\nPreauthorization required, or not covered.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "How much will I pay for the surgeon or physician fees for surgery?",
     "expected_response": "Physician/surgeon fees\n20% coinsurance\n40% coinsurance\nPreauthorization required, or not covered.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the emergency room cost under this plan?",
     "expected_response": "Emergency room care\n20% coinsurance\n20% coinsurance\nNone",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "How much do I pay for emergency medical transportation (ambulance)?",
     "expected_response": "Emergency medical transportation\n20% coinsurance\n20% coinsurance\nNone",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What is the cost for an urgent care visit on this plan?",
     "expected_response": "Urgent care\nKP: 20% coinsurance / visit.\nNetwork: 30% coinsurance / visit.\n40% coinsurance",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Does this plan provide Minimum Essential Coverage?",
     "expected_response": "Does this plan provide Minimum Essential Coverage? Yes.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "What expenses do not count toward the out-of-pocket limit?",
     "expected_response": "Premiums, precertification penalties, balance-billing charges, health care this plan doesn't cover, and services indicated in chart starting on page 2.",
     "should_match": True,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Does this plan cover adult dental or vision care for routine needs?",
     "expected_response": "Yes",
     "should_match": False,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Are hearing aids or hearing exams covered by this plan?",
     "expected_response": "Yes",
     "should_match": False,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   },
   {
     "question": "Does the plan cover bariatric surgery for weight loss?",
     "expected_response": "No",
     "should_match": False,
-    "source": "KaiserPPO.pdf"
+    "source": "kaiserPPO.pdf"
   }
 ]

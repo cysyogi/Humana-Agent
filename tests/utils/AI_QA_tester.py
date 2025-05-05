@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 
 from src.query.query_data import query_rag
-from langchain_community.chat_models import ChatOpenAI
+from langchain_openai.chat_models import ChatOpenAI
 
 load_dotenv()
 
@@ -15,8 +15,8 @@ Actual Response: {actual_response}
 
 
 
-def query_and_validate(question: str, expected_response: str):
-    actual_response = query_rag(question).strip()
+def query_and_validate(question: str, source: str ,expected_response: str):
+    actual_response = query_rag(question,source).strip()
 
     prompt = EVAL_PROMPT.format(
         expected_response=expected_response,

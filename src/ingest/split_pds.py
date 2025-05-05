@@ -21,16 +21,15 @@ def split_documents(
     documents: list[Document],
     *,
     chunk_size: int | None = None,
-    chunk_overlap: int | None = None) -> list[Document]:
-
-    _size    = chunk_size    or DEFAULT_CHUNK_SIZE
-    chunk_overlap = chunk_overlap or DEFAULT_CHUNK_OVERLAP
+    chunk_overlap: int | None = None
+) -> list[Document]:
+    size    = chunk_size    if chunk_size is not None    else DEFAULT_CHUNK_SIZE
+    overlap = chunk_overlap if chunk_overlap is not None else DEFAULT_CHUNK_OVERLAP
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
+        chunk_size=size,
+        chunk_overlap=overlap,
         length_function=LENGTH_FUNCTION,
         is_separator_regex=IS_SEPARATOR_REGEX,
     )
-
     return splitter.split_documents(documents)

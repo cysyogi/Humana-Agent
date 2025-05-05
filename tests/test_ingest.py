@@ -4,8 +4,8 @@ import pytest
 from src.ingest.load_pfds import load_document
 from src.ingest.split_pds import (
     split_documents,
-    CHUNK_SIZE,
-    CHUNK_OVERLAP,
+    DEFAULT_CHUNK_SIZE as CHUNK_SIZE,
+    DEFAULT_CHUNK_OVERLAP as CHUNK_OVERLAP,
 )
 from langchain.schema import Document
 
