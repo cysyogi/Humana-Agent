@@ -106,9 +106,8 @@ pytest -n 2
 ```
 > **Note:** Limit to 2 parallel jobs to avoid OpenAI API rate‑limit (HTTP 429) errors.
 
-## Hyperparameter Tuning with Optuna
+## 6. Hyperparameter Tuning with Optuna
 
-## 6. Optimize chunking parameters via:  
 ```bash
 python tests/tuning/hyperparameter_tuning.py --trials 25      --storage sqlite:///optuna_rag.db --study rag_param_search
 ```
