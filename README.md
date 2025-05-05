@@ -1,19 +1,22 @@
-# Humana-Agent
-## Humana Policy & Provider AI Assistant
+# Humana-Agent – Policy & Provider AI Assistant
 
-## 1 . Project Goal
+**Humana-Agent** is an AI-powered chatbot that helps users query their insurance policy information and locate in‑network providers. It uses a Retrieval‑Augmented Generation (RAG) approach with specialized agents to deliver accurate, context‑rich answers.
 
-A local demo chatbot that **answers insurance-policy questions and locates in-network hospitals** for Humana members. It shows how Retrieval-Augmented Generation (RAG), multi-agent orchestration, and external healthcare APIs can combine to deliver practical, trustworthy answers in a single conversational interface.
+## Overview
 
-*Key objectives*
+- **Purpose:**  
+  Answer insurance policy questions (coverage, costs, etc.) and find in‑network providers for Humana members via a chat interface.
 
-- Parse policy PDFs, index them semantically, and answer coverage questions with sourced citations.
-- Query Humana’s FHIR Provider-Directory API (or any CMS-compliant directory) to list hospitals **in the user’s network**, then sort by distance with map data.
-- Allow easy tuning of chunk size, embedding model, and prompts; fall back to a local LLM when offline.
-- Keep the codebase modular so each agent can evolve (or be swapped) independently.
+- **Architecture:**  
+  The system is modular, with an **Orchestrator** routing queries to:
+  - **PDF Q&A Agent:** Retrieves and answers coverage questions from indexed policy PDFs.  
+  - **Hospital Search Agent:** Queries a FHIR Provider Directory API and ranks by distance.  
+  - **LLM Client:** Generates the final answer using retrieved data.
 
----
-
+- **Technology:**  
+  - **Chroma** vector database for semantic search of policy text.  
+  - **Chainlit** for the web‐based chat UI.  
+  - **LangChain**, **OpenAI API** (or fallback local LLM), **Optuna** for tuning.
 ## 2 . Simplified Architecture
 
 ```text
@@ -45,7 +48,7 @@ A local demo chatbot that **answers insurance-policy questions and locates in-ne
 
 ## 3. Module Flow
 
-1. **ChatUI** (CLI or Gradio) collects the user’s greeting, then asks for **policyID/name** and an optional **ZIPcode** for location.
+1. **ChatUI** (CLI or chainlit) collects the user’s greeting, then asks for **policyID/name** and an optional **ZIPcode** for location.
 2. **Orchestrator** tags each user message with an *intent* (simple keyword rules).  It forwards:
    - *Coverage / cost* queries ➜ **PDFQ&AAgent**.
    - *Provider / hospital* queries ➜ **HospitalSearchAgent**.
@@ -64,24 +67,49 @@ A local demo chatbot that **answers insurance-policy questions and locates in-ne
 
 ---
 
-## 5. QuickStart (local demo)
+## 4. Setup and Installation
 
-. QuickStart (local demo)
+1. **Clone & Install**  
+   ```bash
+   git clone https://github.com/cysyogi/Humana-Agent.git
+   cd Humana-Agent
+   python -m venv .venv && source .venv/bin/activate   # optional
+   pip install -r requirements.txt
+   ```
+
+2. **Configure `.env`**  
+   In the project root, create a `.env` file:
+   ```env
+   OPENAI_API_KEY=<your_openai_key>
+   FHIR_BASE_URL=<FHIR_provider_directory_url>   # optional
+   MAPS_API_KEY=<geocoding_api_key>               # optional
+   ```
+
+3. **Initialize the Vector DB**  
+   Place policy PDFs in `data/`, then run:
+   ```bash
+   python3 -m src.db.populate_database --reset
+   ```
+   This loads PDFs, chunks text, generates embeddings, and stores them in `./chroma/`.
+
+4. **Run the Chainlit App**  
+   ```bash
+   export PYTHONPATH=.
+   chainlit run src/chainlit/app.py
+   ```
+   A browser window will open with the chat UI. Ask questions like “What is my ER copay?” or “Find in‑network hospitals near 30309.”
+
+## 5. Testing
 
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-export OPENAI_API_KEY=...
-# Optional: export MAPS_API_KEY, FHIR_BASE_URL
-python app/ui/gradio_app.py  # then open http://localhost:7860
+pytest -n 2
 ```
+> **Note:** Limit to 2 parallel jobs to avoid OpenAI API rate‑limit (HTTP 429) errors.
 
----
+## Hyperparameter Tuning with Optuna
 
-## 6. Roadmap & Stretch Ideas
-
-- **RAGbenchmark harness** with Recall\@K tracking.
-- **Policy summarizer agent** (high‑level overview on demand).
-- **Chunk visualizer** to inspect what text lives in each vector.
-- **Hybrid lexical+semantic retrieval** for exact‑term questions.
-- **Langfuse tracing** for debugging and latency metrics.
+## 6. Optimize chunking parameters via:  
+```bash
+python tests/tuning/hyperparameter_tuning.py --trials 25      --storage sqlite:///optuna_rag.db --study rag_param_search
+```
+Then update your `.env` with the best `CHUNK_SIZE`/`CHUNK_OVERLAP`.
