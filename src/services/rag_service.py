@@ -10,12 +10,13 @@ import pathlib
 from functools import lru_cache
 from typing import Optional
 
+from langchain_chroma import Chroma
+from src.ingest.embedding_creator import get_embedding
+from src.services.openai_service import ask_openai
+import os
+
 # Re‑use your working RAG pipeline
 from src.query.query_data import query_rag as _query_rag, BASE_K
-
-# ---------------------------------------------------------------------------
-# Policy lookup helpers
-# ---------------------------------------------------------------------------
 
 _POLICY_MAP_PATH = pathlib.Path("data") / "policy_mapping.json"
 
@@ -40,11 +41,9 @@ def find_policy(query: str) -> Optional[str]:
 
     mapping = _policy_mapping()
 
-    # 1️⃣ Exact ID match
     if query in mapping:
         return query
 
-    # 2️⃣ Friendly name → ID
     lowered = query.lower()
     for pid, name in mapping.items():
         if name.lower() == lowered:
@@ -53,10 +52,6 @@ def find_policy(query: str) -> Optional[str]:
     return None
 
 
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
-
 def query_policy(question: str, policy_query: str, *, k: int = BASE_K) -> str:
     """
     High‑level helper:
@@ -64,6 +59,34 @@ def query_policy(question: str, policy_query: str, *, k: int = BASE_K) -> str:
     * call the low‑level RAG pipeline
     """
     policy_id = find_policy(policy_query) or policy_query
-    # If policy_id still unknown, _query_rag will likely throw – callers should
-    # validate with `find_policy()` first when appropriate.
+
+    q_lower = question.lower().strip()
+    if "summarize" in q_lower or "summary" in q_lower:
+        return summarize_policy(policy_id)
     return _query_rag(question, policy_id, k=k)
+
+SUMMARY_PROMPT = """\
+You are a helpful assistant. The user has requested a summary of their insurance policy below.
+
+Policy Document:
+\"\"\"
+{policy_content}
+\"\"\"
+
+Please provide a concise and comprehensive summary of this policy, highlighting the main coverage, benefits, and important conditions.
+"""
+
+def summarize_policy(policy_id: str) -> str:
+    """
+    Retrieve *all* chunks for the given policy and ask the LLM to summarize them.
+    """
+    db = Chroma(
+        collection_name=policy_id,
+        persist_directory=os.getenv("CHROMA_DB_DIR", "chroma"),
+        embedding_function=get_embedding()
+    )
+    all_data = db.get()
+    chunks = all_data.get("documents", [])
+    full_text = "\n\n".join(chunks)
+    prompt = SUMMARY_PROMPT.format(policy_content=full_text)
+    return ask_openai(prompt)

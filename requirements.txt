@@ -21,6 +21,7 @@ anyio==4.9.0
     #   anthropic
     #   asyncer
     #   httpx
+    #   langfuse
     #   mcp
     #   openai
     #   sse-starlette
@@ -33,7 +34,9 @@ asyncer==0.0.7
 attrs==25.3.0
     # via aiohttp
 backoff==2.2.1
-    # via posthog
+    # via
+    #   langfuse
+    #   posthog
 bcrypt==4.3.0
     # via chromadb
 bidict==0.23.1
@@ -135,6 +138,7 @@ httpx==0.28.1
     #   anthropic
     #   chainlit
     #   chromadb
+    #   langfuse
     #   langsmith
     #   literalai
     #   mcp
@@ -151,6 +155,7 @@ idna==3.10
     # via
     #   anyio
     #   httpx
+    #   langfuse
     #   requests
     #   yarl
 importlib-metadata==8.6.1
@@ -190,6 +195,8 @@ langchain-openai==0.3.16
     # via humana-agent (pyproject.toml)
 langchain-text-splitters==0.3.8
     # via langchain
+langfuse==2.60.4
+    # via humana-agent (pyproject.toml)
 langsmith==0.3.39
     # via
     #   langchain
@@ -507,6 +514,7 @@ packaging==24.2
     #   chainlit
     #   huggingface-hub
     #   langchain-core
+    #   langfuse
     #   langsmith
     #   literalai
     #   marshmallow
@@ -544,6 +552,7 @@ pydantic==2.11.4
     #   fastapi
     #   langchain
     #   langchain-core
+    #   langfuse
     #   langsmith
     #   literalai
     #   mcp
@@ -609,6 +618,7 @@ requests==2.32.3
     #   kubernetes
     #   langchain
     #   langchain-community
+    #   langfuse
     #   langsmith
     #   opentelemetry-exporter-otlp-proto-http
     #   posthog
@@ -731,6 +741,7 @@ websockets==15.0.1
 wrapt==1.17.2
     # via
     #   deprecated
+    #   langfuse
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-sqlalchemy
     #   opentelemetry-instrumentation-threading

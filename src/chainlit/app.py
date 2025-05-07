@@ -18,8 +18,12 @@ async def start():
 
 
 @cl.on_message
-async def main_logic(user_message: message.Message):
-    # Delegate handling to orchestrator agent
-    bot_reply = await orchestrator.handle_message(user_message.content)
-    # Send the orchestrator's reply to the user
+async def main_logic(user_msg: cl.Message):
+    content = user_msg.content.strip()
+    if content.lower() in ["reset", "start over", "startover", "start-over"]:
+        orchestrator.reset_session()
+        await cl.Message(content="🔄 Session reset. " + orchestrator.get_greeting()).send()
+        return
+    bot_reply = await orchestrator.handle_message(content)
     await cl.Message(content=bot_reply).send()
+

@@ -1,7 +1,7 @@
 import os
 from src.agents.zip_code_agent import ZipCodeAgent
 from src.agents.insurance_qa_agent import InsuranceQAAgent
-from src.agents.policy_mapping import resolve_policy, POLICY_MAPPING
+from src.agents.policy_mapping import resolve_policy, load_policy_mapping
 
 class OrchestratorAgent:
     def __init__(self):
@@ -53,7 +53,7 @@ class OrchestratorAgent:
                 return "❌ I couldn’t find that policy. Try again."
             self.policy_id = policy_id
             self.state = "CHAT"
-            policy_name = POLICY_MAPPING[policy_id]
+            policy_name = load_policy_mapping()[policy_id]
             if not exact:
                 print(f"[PolicyResolver] Assumed policy: {user_input} → {policy_name}")
                 return (
