@@ -11,6 +11,7 @@ dependencies = [
     "langchain-chroma>=0.2.3",
     "langchain-community>=0.3.23",
     "langchain-openai>=0.3.16",
+    "langfuse>=2.60.4",
     "openai>=1.76.2",
     "optuna>=4.3.0",
     "pypdf>=5.4.0",
@@ -23,6 +24,9 @@ dependencies = [
 [tool.pytest.ini_options]
 testpaths  = ["tests"]
 pythonpath = ["src"]
+env_files = [
+  ".env.test"
+]
 
 [tool.poetry.dev-dependencies]
 pypdf = "^5.0"

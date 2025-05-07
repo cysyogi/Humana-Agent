@@ -1,7 +1,11 @@
 import os
+
 from langchain_openai import OpenAIEmbeddings
+from langfuse import Langfuse
+from langfuse.decorators import observe
 
-
+langfuse = Langfuse()
+@observe(as_type="generation")
 def get_embedding():
     """
     Returns an OpenAIEmbeddings instance.

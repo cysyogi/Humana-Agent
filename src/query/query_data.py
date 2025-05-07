@@ -4,7 +4,6 @@ import sys, os, json
 from dotenv import load_dotenv
 from langchain_chroma import Chroma
 from langchain.chains import LLMChain
-from langchain_community.chat_models import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 
 from src.services.openai_service import ask_openai
@@ -70,6 +69,7 @@ def query_rag(query_text: str, policy_id: str,k: int = 5) -> str:
     )
 
     results     = db.similarity_search_with_score(query_text, k)
+    print(f"Results: {results}")
     docs, _     = zip(*results)
     context_txt = "\n\n---\n\n".join(d.page_content for d in docs)
 

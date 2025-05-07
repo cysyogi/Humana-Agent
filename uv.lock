@@ -843,6 +843,7 @@ dependencies = [
     { name = "langchain-chroma" },
     { name = "langchain-community" },
     { name = "langchain-openai" },
+    { name = "langfuse" },
     { name = "openai" },
     { name = "optuna" },
     { name = "pypdf" },
@@ -860,6 +861,7 @@ requires-dist = [
     { name = "langchain-chroma", specifier = ">=0.2.3" },
     { name = "langchain-community", specifier = ">=0.3.23" },
     { name = "langchain-openai", specifier = ">=0.3.16" },
+    { name = "langfuse", specifier = ">=2.60.4" },
     { name = "openai", specifier = ">=1.76.2" },
     { name = "optuna", specifier = ">=4.3.0" },
     { name = "pypdf", specifier = ">=5.4.0" },
@@ -1116,6 +1118,25 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e7/ac/b4a25c5716bb0103b1515f1f52cc69ffb1035a5a225ee5afe3aed28bf57b/langchain_text_splitters-0.3.8.tar.gz", hash = "sha256:116d4b9f2a22dda357d0b79e30acf005c5518177971c66a9f1ab0edfdb0f912e", size = 42128, upload_time = "2025-04-04T14:03:51.521Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8b/a3/3696ff2444658053c01b6b7443e761f28bb71217d82bb89137a978c5f66f/langchain_text_splitters-0.3.8-py3-none-any.whl", hash = "sha256:e75cc0f4ae58dcf07d9f18776400cf8ade27fadd4ff6d264df6278bb302f6f02", size = 32440, upload_time = "2025-04-04T14:03:50.6Z" },
+]
+
+[[package]]
+name = "langfuse"
+version = "2.60.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "backoff" },
+    { name = "httpx" },
+    { name = "idna" },
+    { name = "packaging" },
+    { name = "pydantic" },
+    { name = "requests" },
+    { name = "wrapt" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c8/fc/3cbf173d8a4caf595d13de3f7ed659b4199ae898e8f35fa03167fa1c527a/langfuse-2.60.4.tar.gz", hash = "sha256:1fb6f1228dd6ed8ce49ffeba92eae1209bd46f0bd67fc0c6a5ec881af60ea68a", size = 152779, upload_time = "2025-05-06T13:30:17.189Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/79/3f/4c404b5d8c767ab8a64fa1ec2ac2c13c94c5e442cab336dff1dbe12d56d3/langfuse-2.60.4-py3-none-any.whl", hash = "sha256:458e685d9c924addca6a268ab01369e32777e6514694325a6dd1578a0c1e6fa6", size = 275355, upload_time = "2025-05-06T13:30:15.173Z" },
 ]
 
 [[package]]

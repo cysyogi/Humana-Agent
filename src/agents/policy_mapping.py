@@ -5,8 +5,13 @@ from src.services.openai_service import ask_openai
 
 POLICY_MAP_PATH = Path("data") / "policy_mapping.json"
 
-with open(POLICY_MAP_PATH) as f:
-    POLICY_MAPPING = json.load(f)
+def load_policy_mapping() -> dict[str, str]:
+    """
+    Reads the mapping from disk each time so changes show up immediately.
+    """
+    if not POLICY_MAP_PATH.exists():
+        return {}
+    return json.loads(POLICY_MAP_PATH.read_text())
 
 
 def resolve_policy(user_input: str):
@@ -19,16 +24,16 @@ def resolve_policy(user_input: str):
     """
 
     # Exact match by ID
-    if user_input in POLICY_MAPPING:
+    if user_input in load_policy_mapping():
         return user_input, True
 
     # Exact match by name (case insensitive)
-    for pid, name in POLICY_MAPPING.items():
+    for pid, name in load_policy_mapping().items():
         if name.lower() == user_input.lower():
             return pid, True
 
     # Use LLM to resolve
-    policies_text = "\n".join([f"{pid}: {name}" for pid, name in POLICY_MAPPING.items()])
+    policies_text = "\n".join([f"{pid}: {name}" for pid, name in load_policy_mapping().items()])
 
     prompt = f"""
     Available Policies:
@@ -47,4 +52,4 @@ def resolve_policy(user_input: str):
     if response == "None":
         return None, False
 
-    return response, response in POLICY_MAPPING
+    return response, response in load_policy_mapping()

@@ -1,22 +1,23 @@
-import os
-from langchain_community.chat_models import ChatOpenAI
+# src/services/openai_service.py
 
-# Load model from env
+import os
+from langchain_openai.chat_models import ChatOpenAI
+from langfuse import Langfuse
+from langfuse.decorators import observe
+from dotenv import load_dotenv
+
+load_dotenv()
+langfuse = Langfuse()
+
 LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4.1")
 
-# Create singleton (reuse across app)
+# singleton model with its own callback
 _openai_model = ChatOpenAI(
     model_name=LLM_MODEL,
     temperature=0.0,
 )
 
+@observe()
 def ask_openai(prompt: str) -> str:
-    """
-    Send prompt to OpenAI and return response text.
-    """
-    raw_response = _openai_model.invoke(prompt)
-
-    if hasattr(raw_response, "content"):
-        return raw_response.content.strip()
-
-    return raw_response.strip()
+    raw = _openai_model.invoke(prompt)
+    return getattr(raw, "content", str(raw)).strip()

@@ -2,8 +2,11 @@ from dotenv import load_dotenv
 
 from src.query.query_data import query_rag
 from langchain_openai.chat_models import ChatOpenAI
+from langfuse import Langfuse
+from langfuse.decorators import observe
 
 load_dotenv()
+langfuse = Langfuse()
 
 EVAL_PROMPT = """
 Expected Response: {expected_response}
@@ -14,7 +17,7 @@ Actual Response: {actual_response}
 
 
 
-
+@observe(name="testing")
 def query_and_validate(question: str, source: str ,expected_response: str):
     actual_response = query_rag(question,source).strip()
 
